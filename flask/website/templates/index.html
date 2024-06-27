@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>파일 업로드 전</h1>
+    <div class="textareas">
+        <textarea id="text1" placeholder="Enter first text..."></textarea>
+        <textarea id="text2" placeholder="Enter second text..."></textarea>
+    </div>
+    <button onclick="compareTexts()">Compare</button>
+    <div class="result" id="result"></div>
+</div>
+{% endblock %}
