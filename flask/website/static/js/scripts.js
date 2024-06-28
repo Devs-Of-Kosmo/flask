@@ -1,19 +1,39 @@
-function compareTexts() {
-    const text1 = document.getElementById('text1').value;
-    const text2 = document.getElementById('text2').value;
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var formData = new FormData(event.target);
 
-    fetch('/compare', {
+    fetch('/upload', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `text1=${encodeURIComponent(text1)}&text2=${encodeURIComponent(text2)}`
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById('result').innerHTML = `<p style="color: ${data.result === 'Texts are identical' ? 'green' : 'red'};">${data.result}</p>`;
-        if (data.result !== "Texts are identical") {
-            document.getElementById('result').innerHTML += `<pre>${data.diff_html}</pre>`;
+        if (data.result === "File uploaded successfully") {
+            document.getElementById('directoryStructure').innerHTML = '<pre>' + JSON.stringify(data.dir_structure, null, 2) + '</pre>';
+            document.getElementById('projectDir').value = data.project_dir;
+            document.getElementById('packageForm').style.display = 'block';
+        } else {
+            document.getElementById('directoryStructure').innerHTML = data.result;
         }
-    });
-}
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+document.getElementById('packageSelectForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var formData = new FormData(event.target);
+
+    fetch('/package', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.result === "Package directory fetched successfully") {
+            document.getElementById('directoryStructure').innerHTML = '<pre>' + JSON.stringify(data.dir_structure, null, 2) + '</pre>';
+        } else {
+            document.getElementById('directoryStructure').innerHTML = data.result;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
