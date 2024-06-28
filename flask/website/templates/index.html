@@ -1,24 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}File Comparison{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>프로젝트 업로드 및 디렉토리 구조 보기</h1>
+    <h1>File Comparison</h1>
     <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
-        <label for="project">프로젝트 파일 (zip 형식):</label>
-        <input type="file" name="project" required><br><br>
-        <button type="submit">업로드</button>
+        <div class="file-upload">
+            <div class="upload-section">
+                <label for="file1" class="upload-label">Original File (zip format):</label>
+                <input type="file" name="file1" id="file1" class="file-input" required><br><br>
+            </div>
+            <div class="upload-section">
+                <label for="file2" class="upload-label">Changed File (zip format):</label>
+                <input type="file" name="file2" id="file2" class="file-input" required><br><br>
+            </div>
+        </div>
+        <button type="submit" class="styled-button">Upload</button>
     </form>
-    <div id="directoryStructure"></div>
-    <div id="packageForm" style="display: none;">
-        <h2>패키지 선택</h2>
-        <form id="packageSelectForm" action="/package" method="post">
-            <input type="hidden" name="project_dir" id="projectDir">
-            <label for="package_name">패키지 이름:</label>
-            <input type="text" name="package_name" id="packageName" required><br><br>
-            <button type="submit">보기</button>
-        </form>
+    <div class="results" id="results">
+        <!-- Directory structure will be displayed here -->
     </div>
 </div>
 {% endblock %}

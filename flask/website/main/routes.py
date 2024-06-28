@@ -2,7 +2,7 @@ import os
 import zipfile
 import tempfile
 import shutil
-from flask import render_template, request, jsonify, Blueprint
+from flask import render_template, request, jsonify, Blueprint, Markup
 
 main = Blueprint('main', __name__)
 UPLOAD_FOLDER = tempfile.mkdtemp()
@@ -13,66 +13,71 @@ def index():
 
 @main.route('/upload', methods=['POST'])
 def upload():
-    uploaded_file = request.files.get('project')
+    file1 = request.files.get('file1')
+    file2 = request.files.get('file2')
 
-    if not uploaded_file:
-        return jsonify(result="No file uploaded"), 400
+    if not file1 or not file2:
+        return jsonify(result="Both files must be uploaded"), 400
 
-    # Save the uploaded file
-    file_path = os.path.join(UPLOAD_FOLDER, uploaded_file.filename)
-    uploaded_file.save(file_path)
+    file1_path = os.path.join(UPLOAD_FOLDER, file1.filename)
+    file2_path = os.path.join(UPLOAD_FOLDER, file2.filename)
 
-    # Extract the uploaded file
-    project_dir = os.path.join(UPLOAD_FOLDER, os.path.splitext(uploaded_file.filename)[0])
-    with zipfile.ZipFile(file_path, 'r') as zip_ref:
-        zip_ref.extractall(project_dir)
+    file1.save(file1_path)
+    file2.save(file2_path)
 
-    # Get the top-level directory structure
-    dir_structure = get_top_level_structure(project_dir)
+    # Extract the uploaded files
+    dir1 = os.path.join(UPLOAD_FOLDER, os.path.splitext(file1.filename)[0])
+    dir2 = os.path.join(UPLOAD_FOLDER, os.path.splitext(file2.filename)[0])
 
-    return jsonify(result="File uploaded successfully", dir_structure=dir_structure, project_dir=project_dir)
+    with zipfile.ZipFile(file1_path, 'r') as zip_ref:
+        zip_ref.extractall(dir1)
+    with zipfile.ZipFile(file2_path, 'r') as zip_ref:
+        zip_ref.extractall(dir2)
 
-def get_top_level_structure(rootdir):
+    # Get the directory structures
+    dir1_structure = get_directory_structure_html(dir1)
+    dir2_structure = get_directory_structure_html(dir2)
+
+    combined_structure = Markup(f"""
+        <div class='structure-container'>
+            <div class='structure'>
+                <h3>Original File Structure</h3>
+                {dir1_structure}
+            </div>
+            <div class='structure'>
+                <h3>Changed File Structure</h3>
+                {dir2_structure}
+            </div>
+        </div>
+    """)
+
+    return jsonify(result="Files uploaded successfully", combined_structure=combined_structure)
+
+def get_directory_structure_html(rootdir):
     """
-    Creates a dictionary that represents the top-level folder structure of rootdir
+    Creates an HTML representation of the folder structure of rootdir
     """
-    dir_structure = {}
-    for item in os.listdir(rootdir):
-        item_path = os.path.join(rootdir, item)
-        if os.path.isdir(item_path):
-            dir_structure[item] = 'directory'
-        else:
-            dir_structure[item] = 'file'
-    return dir_structure
+    structure = "<ul class='directory-list'>"
+    for root, dirs, files in os.walk(rootdir):
+        if root == rootdir:
+            for dir_name in dirs:
+                structure += f"<li class='directory'>{dir_name}{get_subdirectories(os.path.join(root, dir_name))}</li>"
+            for file_name in files:
+                structure += f"<li class='file'>{file_name}</li>"
+            break  # Only process the top-level directory
+    structure += "</ul>"
+    return structure
 
-@main.route('/package', methods=['POST'])
-def package():
-    project_dir = request.form.get('project_dir')
-    package_name = request.form.get('package_name')
-
-    if not project_dir or not package_name:
-        return jsonify(result="Project directory or package name not specified"), 400
-
-    package_path = os.path.join(project_dir, package_name)
-
-    if not os.path.exists(package_path):
-        return jsonify(result="Specified package does not exist"), 400
-
-    dir_structure = get_directory_structure(package_path)
-
-    return jsonify(result="Package directory fetched successfully", dir_structure=dir_structure)
-
-def get_directory_structure(rootdir):
+def get_subdirectories(rootdir):
     """
-    Creates a nested dictionary that represents the folder structure of rootdir
+    Creates an HTML representation of subdirectories for a given directory
     """
-    dir_structure = {}
-    for dirpath, dirnames, filenames in os.walk(rootdir):
-        folder = os.path.relpath(dirpath, rootdir)
-        subdir = dir_structure
-        if folder != '.':
-            for part in folder.split(os.sep):
-                subdir = subdir.setdefault(part, {})
-        for filename in filenames:
-            subdir[filename] = None
-    return dir_structure
+    structure = "<ul class='nested'>"
+    for root, dirs, files in os.walk(rootdir):
+        for dir_name in dirs:
+            structure += f"<li class='directory'>{dir_name}{get_subdirectories(os.path.join(root, dir_name))}</li>"
+        for file_name in files:
+            structure += f"<li class='file'>{file_name}</li>"
+        break  # Only process the immediate subdirectories
+    structure += "</ul>"
+    return structure
