@@ -13,6 +13,8 @@
     </div>
     <div class="main-content">
         <h1>File Comparison</h1>
+        <button id="save-changes-btn" class="action-btn">Save Changes</button> <!-- 변경된 파일을 저장하겠습니까 버튼 추가 -->
+        <div id="result-message" class="result-message"></div> <!-- 결과 메시지를 표시할 요소 추가 -->
         <div class="results">
             <div class="column content-column">
                 <div class="title-section">
@@ -41,7 +43,7 @@
             </div>
         </div>
         <div class="compare-section">
-            <button id="compare-btn">Find Difference</button>
+            <button id="compare-btn" class="action-btn">Find Difference</button>
             <div class="comparison-result" id="comparison-result">
                 <!-- Differences will be displayed here -->
             </div>

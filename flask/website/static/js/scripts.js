@@ -14,6 +14,10 @@ document.getElementById('compare-btn').addEventListener('click', function() {
     compareFiles();
 });
 
+document.getElementById('save-changes-btn').addEventListener('click', function() {
+    saveChanges();
+});
+
 function uploadFile(input, type) {
     var formData = new FormData();
     formData.append(input.name, input.files[0]);
@@ -68,6 +72,54 @@ function compareFiles() {
         var resultElement = document.getElementById('comparison-result');
         resultElement.innerHTML = data.differences;
         resultElement.classList.add('show'); // Add this line to show the result
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function saveChanges() {
+    var changedContent = document.getElementById('changed-file-content').innerText;
+
+    fetch('/save_changes', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            changed: changedContent
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        var resultMessageElement = document.getElementById('result-message');
+        resultMessageElement.textContent = data.result;
+
+        if (data.result === "File saved successfully.") {
+            resultMessageElement.classList.add('success');
+            resultMessageElement.classList.remove('error');
+            reloadOriginalFile(data.file_path);
+        } else {
+            resultMessageElement.classList.add('error');
+            resultMessageElement.classList.remove('success');
+        }
+    })
+    .catch(error => {
+        var resultMessageElement = document.getElementById('result-message');
+        resultMessageElement.textContent = 'Failed to save changes.';
+        resultMessageElement.classList.add('error');
+        resultMessageElement.classList.remove('success');
+        console.error('Error:', error);
+    });
+}
+
+function reloadOriginalFile(filePath) {
+    fetch('/file?path=' + encodeURIComponent(filePath))
+    .then(response => response.json())
+    .then(data => {
+        if (data.result === "File loaded successfully") {
+            document.getElementById('original-file-content').innerText = data.content;
+        } else {
+            alert(data.result);
+        }
     })
     .catch(error => console.error('Error:', error));
 }
