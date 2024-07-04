@@ -4,52 +4,22 @@
 
 {% block content %}
 <div class="container">
-    <div class="sidebar">
-        <h2>Project Directory Structure</h2>
-        <span id="file1-name" class="file-name"></span>
-        <div class="structure-container" id="original-structure-container">
-            <!-- Original file structure will be displayed here -->
-        </div>
-    </div>
-    <div class="main-content">
-        <h1>File Comparison</h1>
-        <button id="save-changes-btn" class="action-btn">Save Changes</button> <!-- 변경된 파일을 저장하겠습니까 버튼 추가 -->
-        <div id="result-message" class="result-message"></div> <!-- 결과 메시지를 표시할 요소 추가 -->
-        <div class="results">
-            <div class="column content-column">
-                <div class="title-section">
-                    <h3>Original File Content</h3>
-                </div>
-                <div class="upload-section">
-                    <input type="file" name="file1" id="file1" class="file-input" style="display: none;" required>
-                    <button type="button" class="open-file-btn" onclick="document.getElementById('file1').click();">Open File.zip</button>
-                </div>
-                <div class="file-content" id="original-file-content">
-                    <!-- Original file content will be displayed here -->
-                </div>
+    <h1>File Comparison</h1>
+    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+        <div class="file-upload">
+            <div class="upload-section">
+                <label for="file1" class="upload-label">Original File (zip format):</label>
+                <input type="file" name="file1" id="file1" class="file-input" required><br><br>
             </div>
-            <div class="column content-column">
-                <div class="title-section">
-                    <h3>Changed File Content</h3>
-                </div>
-                <div class="upload-section">
-                    <input type="file" name="file2" id="file2" class="file-input" style="display: none;" required>
-                    <button type="button" class="open-file-btn" onclick="document.getElementById('file2').click();">Open File</button>
-                    <span id="file2-name" class="file-name"></span>
-                </div>
-                <div class="file-content" id="changed-file-content">
-                    <!-- Changed file content will be displayed here -->
-                </div>
+            <div class="upload-section">
+                <label for="file2" class="upload-label">Changed File (zip format):</label>
+                <input type="file" name="file2" id="file2" class="file-input" required><br><br>
             </div>
         </div>
-        <div class="compare-section">
-            <button id="compare-btn" class="action-btn">Find Difference</button>
-            <div class="comparison-result" id="comparison-result">
-                <!-- Differences will be displayed here -->
-            </div>
-        </div>
+        <button type="submit" class="styled-button">Upload</button>
+    </form>
+    <div class="results" id="results">
+        <!-- Directory structure will be displayed here -->
     </div>
 </div>
-
-<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 {% endblock %}

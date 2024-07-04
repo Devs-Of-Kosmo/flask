@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.file-upload {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 20px;
+}
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.left-section {
+    align-items: flex-start;
+}
+
+.right-section {
+    align-items: flex-end;
+}
+
+.file-name {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+.results {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 20px;
+}
+
+.structure-and-content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.structure-container, .file-content {
+    width: 48%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.directory-list, .nested {
+    list-style-type: none;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.directory {
+    cursor: pointer;
+    padding-left: 16px;
+    position: relative;
+}
+
+.directory:before {
+    content: "\25B6"; /* Right-pointing triangle */
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: rotate(0deg);
+    transition: transform 0.2s ease;
+}
+
+.directory-open:before {
+    transform: rotate(90deg);
+}
+
+.file {
+    padding-left: 16px;
+    position: relative;
+}
+
+.file:before {
+    content: "\1F4C4"; /* Page with curl icon */
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.nested {
+    display: none;
+    padding-left: 20px;
+}
+
+.active {
+    display: block;
+}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}File Comparison{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>File Comparison</h1>
+    <div class="file-upload">
+        <div class="upload-section left-section">
+            <label for="file1" class="upload-label">Original File (zip format):</label>
+            <input type="file" name="file1" id="file1" class="file-input" required>
+            <span id="file1-name" class="file-name"></span>
+        </div>
+        <div class="upload-section right-section">
+            <label for="file2" class="upload-label">Changed File (zip format):</label>
+            <input type="file" name="file2" id="file2" class="file-input" required>
+            <span id="file2-name" class="file-name"></span>
+        </div>
+    </div>
+    <div class="results">
+        <div class="structure-and-content">
+            <div class="structure-container" id="original-structure-container">
+                <h3>Original File Structure</h3>
+                <!-- Original file structure will be displayed here -->
+            </div>
+            <div class="file-content" id="original-file-content">
+                <h3>Original File Content</h3>
+                <!-- Original file content will be displayed here -->
+            </div>
+        </div>
+        <div class="structure-and-content">
+            <div class="structure-container" id="changed-structure-container">
+                <h3>Changed File Structure</h3>
+                <!-- Changed file structure will be displayed here -->
+            </div>
+            <div class="file-content" id="changed-file-content">
+                <h3>Changed File Content</h3>
+                <!-- Changed file content will be displayed here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+{% endblock %}
